@@ -8,11 +8,13 @@ IntList temp_a;
 IntList voltage_output_b;
 IntList temp_b;
 
-int lists_size = 10;
+int lists_size = 300;
 
 // Serial protocol variables
 int value = 0;
 int channel;
+
+boolean ready = false;
 
 
 void setup() {
@@ -32,11 +34,13 @@ void setup() {
 }
 
 void draw() {
+  background(255);
   println("VO_A: ", voltage_output_a);
   println("T_A: ", temp_a);
   println("VO_B: ", voltage_output_b);
   println("T_B: ", temp_b);
   println();
+  if (ready) plotGraph(voltage_output_a, 100, 100, 2, 2);
 }
 
 // event function called by processing when receiving new serial data
@@ -71,5 +75,6 @@ void serialEvent(Serial myPort) {
       }
       value = 0;
     }
+    ready = true;
   }
 }
