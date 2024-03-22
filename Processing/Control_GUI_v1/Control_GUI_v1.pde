@@ -16,6 +16,11 @@ int channel;
 
 boolean ready = false;
 
+Graph voltage_output_a_;
+Graph temp_output_a_;
+Graph voltage_output_b_;
+Graph temp_output_b_;
+
 
 void setup() {
   size(1200, 700);
@@ -31,16 +36,17 @@ void setup() {
   temp_a = new IntList();
   voltage_output_b = new IntList();
   temp_b = new IntList();
+  
+  voltage_output_a_ = new Graph(100, 150, 700, 300);
+  
 }
 
 void draw() {
   background(255);
-  println("VO_A: ", voltage_output_a);
-  println("T_A: ", temp_a);
-  println("VO_B: ", voltage_output_b);
-  println("T_B: ", temp_b);
-  println();
-  if (ready) plotGraph(voltage_output_a, 100, 100, 2, 2);
+  if (ready) {
+    voltage_output_a_.testDraw();
+    voltage_output_a_.plotGraph();
+  }
 }
 
 // event function called by processing when receiving new serial data
@@ -57,11 +63,13 @@ void serialEvent(Serial myPort) {
         
         if (channel == 1) {
           if (voltage_output_a.size() > lists_size) voltage_output_a.remove(0);
-          voltage_output_a.append(value);
+          //voltage_output_a.append(value);
+          voltage_output_a_.addData(value);
         }
         if (channel == 2) {
           if (temp_a.size() > lists_size) temp_a.remove(0);
           temp_a.append(value);
+          
         }
         if (channel == 3) {
           if (voltage_output_b.size() > lists_size) voltage_output_b.remove(0);
