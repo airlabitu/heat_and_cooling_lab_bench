@@ -1,22 +1,3 @@
-
-int w = 600;
-int h = 300;
-
-void plotGraph(IntList data, int x, int y, int xSpacing, int ySpacing){
-  stroke(255,0,0);
-  for (int i = data.size()-1; i > 0; i--){
-    if (i < data.size()-1) {
-      int x1, y1, x2, y2;
-      x1 = x+w-(i+1)*xSpacing;
-      y1 = y+h-data.get(i+1)*ySpacing;
-      x2 = x+w-(i)*xSpacing;
-      y2 = y+h-data.get(i)*ySpacing;
-      line(x1,y1,x2,y2);
-    }    
-  }  
-}
-
-
 class Graph{
   
   int x, y, w, h;
@@ -28,16 +9,23 @@ class Graph{
   int x_spacing = 2;
   int y_spacing = 2;
   
-  IntList data_temp;
-  IntList data_voltage;
+  FloatList data_temp;
+  FloatList data_voltage;
   
   int data_max_size;
   
+  int min_voltage = 0;
+  int max_voltage = 12;
+  
+  int min_temp = -10;
+  int max_temp = 40;
+  
+  int margin = 10;
+  
   
   Graph(int x_, int y_, int w_, int h_){
-    data_voltage = new IntList();
-    data_temp = new IntList();
-    
+    data_voltage = new FloatList();
+    data_temp = new FloatList();
     
     x = x_;
     y = y_;
@@ -69,6 +57,17 @@ class Graph{
     
   }
   
+  void drawInfo(){
+    for (int v = min_voltage; v <= max_voltage; v++){
+      fill(255,0,0);
+      text(v, left_info_area_x+left_info_area_w*0.2, map(v, min_voltage, max_voltage, left_info_area_y+left_info_area_h, left_info_area_y));
+    }
+    for (int t = min_temp; t <= max_temp; t+=2){
+      fill(0,255,0);
+      text(t, left_info_area_x+left_info_area_w*0.7, map(t, min_temp, max_temp, left_info_area_y+left_info_area_h, left_info_area_y));
+    } 
+  }
+  
   void testDraw(){
     noFill();
     
@@ -88,35 +87,37 @@ class Graph{
     rect(bottom_info_area_x,bottom_info_area_y,bottom_info_area_w,bottom_info_area_h); // left info border
   }
   
-  void addTempData(int value_){
+  void addVoltageData(float value_){
     if (data_voltage.size() > data_max_size) data_voltage.remove(0);
     data_voltage.append(value_);
+    
   }
   
-  void addVoltageData(int value_){
+  void addTempData(float value_){
     if (data_temp.size() > data_max_size) data_temp.remove(0);
     data_temp.append(value_);
+    
   }
   
   void drawGraph(){
-    plotGraph(data_voltage, color(255,0,0));
-    plotGraph(data_temp, color(0,255,0));
+    plotGraph(data_voltage, color(255,0,0), min_voltage, max_voltage);
+    plotGraph(data_temp, color(0,255,0), min_temp, max_temp);
+    drawInfo();
   }
   
-  void plotGraph(IntList data, color c){
-    stroke(255,0,0);
+  void plotGraph(FloatList data, color c, int min, int max){
+    stroke(c);
     for (int i = data.size()-1; i > 0; i--){
       if (i < data.size()-1) {
         if ((graph_area_x+graph_area_w-(i+1)*x_spacing) > graph_area_x) {
           int x1, y1, x2, y2;
           x1 = graph_area_x+graph_area_w-(i+1)*x_spacing;
-          y1 = graph_area_y+graph_area_h-data.get(i+1)*y_spacing;
+          y1 = int(map(data.get(i+1), min, max, graph_area_y+graph_area_h, graph_area_y));   
           x2 = graph_area_x+graph_area_w-(i)*x_spacing;
-          y2 = graph_area_y+graph_area_h-data.get(i)*y_spacing;
+          y2 = int(map(data.get(i), min, max, graph_area_y+graph_area_h, graph_area_y));
           line(x1,y1,x2,y2);
         }
       }    
     }  
   }
-  
 }

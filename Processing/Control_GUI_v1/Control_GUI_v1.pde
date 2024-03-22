@@ -3,27 +3,18 @@ import processing.serial.*;
 Serial myPort;                       // The serial port
 int[] serialInArray = new int[3];    // Where we'll put what we receive
 
-IntList voltage_output_a;
-IntList temp_a;
-IntList voltage_output_b;
-IntList temp_b;
-
-int lists_size = 300;
-
 // Serial protocol variables
 int value = 0;
 int channel;
 
 boolean ready = false;
 
-Graph voltage_output_a_;
-Graph temp_output_a_;
-Graph voltage_output_b_;
-Graph temp_output_b_;
+Graph side_a;
+Graph side_b;
 
 
 void setup() {
-  size(1200, 700);
+  size(1200, 800);
   // print the serial list with indexes
   for (int i = 0; i < Serial.list().length; i++) {
     println(i, Serial.list()[i]);
@@ -32,20 +23,18 @@ void setup() {
       println("Serial connection:", Serial.list()[i], myPort);
     }
   }
-  voltage_output_a = new IntList();
-  temp_a = new IntList();
-  voltage_output_b = new IntList();
-  temp_b = new IntList();
-  
-  voltage_output_a_ = new Graph(100, 150, 700, 300);
-  
+  side_a = new Graph(100, 50, 500, 300);
+  side_b = new Graph(100, 400, 500, 300);
+  side_a.max_voltage = 5; // side A is set up to 0-5v in the Arduino code
 }
 
 void draw() {
   background(255);
   if (ready) {
-    voltage_output_a_.testDraw();
-    voltage_output_a_.plotGraph();
+    side_a.testDraw();
+    side_a.drawGraph();
+    side_b.testDraw();
+    side_b.drawGraph();
   }
 }
 
@@ -60,26 +49,10 @@ void serialEvent(Serial myPort) {
     } else {
       if (inByte=='c') channel = value;
       else if (inByte=='w') {
-        
-        if (channel == 1) {
-          if (voltage_output_a.size() > lists_size) voltage_output_a.remove(0);
-          //voltage_output_a.append(value);
-          voltage_output_a_.addData(value);
-        }
-        if (channel == 2) {
-          if (temp_a.size() > lists_size) temp_a.remove(0);
-          temp_a.append(value);
-          
-        }
-        if (channel == 3) {
-          if (voltage_output_b.size() > lists_size) voltage_output_b.remove(0);
-          voltage_output_b.append(value);
-        }
-        if (channel == 4) {
-          if (temp_b.size() > lists_size) temp_b.remove(0);
-          temp_b.append(value);
-        }
-        
+        if (channel == 1) side_a.addVoltageData(map(value, 0, 102, 0, 5)); // input scale (pwm) 0-102 output scale (voltage) 0-5
+        else if (channel == 2) side_a.addTempData(map(value, 0, 5000, -10, 40));
+        else if (channel == 3) side_b.addVoltageData(map(value, 0, 255, 0, 12)); // input scale (pwm) 0-255 output scale (voltage) 0-12
+        else if (channel == 4) side_b.addTempData(map(value, 0, 5000, -10, 40));
       }
       value = 0;
     }

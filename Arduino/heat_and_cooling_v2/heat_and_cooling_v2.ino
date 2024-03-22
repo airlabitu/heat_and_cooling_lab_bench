@@ -16,9 +16,19 @@
 int pot_a_value;
 int pot_b_value;
 
+// voltage output (PWM)
+
+//int voltage_output_a;
+//int voltage_output_b;
+//int side_a_voltage_pmw;
+//int side_a_voltage_vol;
+//int side_b_voltage_pmw;
+//int side_b_voltage_vol;
+
+
 // temp sensor value
 float temp_a_value;
-float temp_b_value;
+int temp_b_value;
 
 // H-bridge A connections
 int enA = 9;
@@ -58,28 +68,40 @@ void setup() {
 void loop() {
   // Side A
   pot_a_value = analogRead(pot_a_pin); // reads the sensor (knop)
+  //voltage_output_a = map(pot_a_value, 0, 1023, 0, PWM_5V); // translates from sensor scale (0-1023) to heat output scale (0-102) [0 - 4.95 V]
+  //side_a_voltage_pmw = map(pot_a_value, 0, 1023, 0, PWM_5V);
+  //side_a_voltage_vol = map(pot_a_value, 0, 1023, 0, 12);
+  //analogWrite(enA, voltage_output_a); // updates the heat output
   analogWrite(enA, map(pot_a_value, 0, 1023, 0, PWM_5V)); // updates the heat output - mapped to PWM interval (5v)
   sensorA.requestTemperatures();
   temp_a_value = sensorA.getTempCByIndex(0);
-
+  Serial.println(map(pot_a_value*1.0, 0, 1023, 0, 5));
+  Serial.println(ceil(map(pot_a_value, 0, 1023, 0, 5)));
+  Serial.println((map(pot_a_value, 0, 1023, 0, 5)-ceil(map(pot_a_value, 0, 1023, 0, 5)))*100);
+  Serial.println(int((map(pot_a_value, 0, 1023, 0, 5)-int(map(pot_a_value, 0, 1023, 0, 5)))*100));
+  Serial.println();
+  /*
   // Side B
   pot_b_value = 1023-analogRead(pot_b_pin); // reads the sensor (knop), and reverse direction for equal interaction on the box
+  ///voltage_output_b = map(pot_b_value, 0, 1023, 0, PWM_12V);
+  //side_b_voltage_pmw = map(pot_b_value, 0, 1023, 0, PWM_12V);
+  //side_b_voltage_vol = map(pot_b_value, 0, 1023, 0, 12);
   analogWrite(enB, map(pot_b_value, 0, 1023, 0, PWM_12V)); // updates teh heat output - mapped to PWM interval (12v)
   sensorB.requestTemperatures();
-  temp_b_value = sensorB.getTempCByIndex(0);
+  temp_b_value = int(sensorB.getTempCByIndex(0));
 
 
   // Voltage output side A
   Serial.print(1); // channel
   Serial.print('c');
-  Serial.print(map(pot_a_value, 0, 1023, 0, PWM_5V)); // pot sensor value mapped to voltage (scale 0-5 volt) 
+  Serial.print(int(map(pot_a_value, 0, 1023, 0, 5))); // pot sensor value mapped to voltage (scale 0-5 volt) 
   Serial.print('w'); 
   delay(10);
   // Temperature sensor side A
   if (temp_a_value != -127){ // skip sending if no sensor is connected (-127)
     Serial.print(2); // channel
     Serial.print('c');
-    Serial.print(int((constrain(temp_a_value, -10, 40)+10)*100)); // temp value // mapped to range 0-5000 - used in Processing as map(data, 0, 5000, -10, -40) 
+    Serial.print(temp_a_value); // value
     Serial.print('w');
     delay(10);
   }
@@ -87,16 +109,17 @@ void loop() {
   // Voltage output side B
   Serial.print(3); // channel
   Serial.print('c');
-  Serial.print(map(pot_b_value, 0, 1023, 0, PWM_12V)); // pot sensor value mapped to voltage (scale 0-12 volt) 
+  Serial.print(int(map(pot_b_value, 0, 1023, 0, 12))); // pot sensor value mapped to voltage (scale 0-12 volt) 
   Serial.print('w'); 
   delay(10);
   // Temperature sensor side B
   if (temp_b_value != -127){ // skip sending if no sensor is connected (-127)
     Serial.print(4); // channel
     Serial.print('c');
-    Serial.print(int((constrain(temp_b_value, -10, 40)+10)*100)); // temp value // mapped to range 0-5000 - used in Processing as map(data, 0, 5000, -10, -40)  
+    Serial.print(temp_b_value); // value
     Serial.print('w');
     delay(10);
   }
   //delay(1000);
+  */
 }
