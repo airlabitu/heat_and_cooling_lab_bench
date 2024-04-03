@@ -16,7 +16,7 @@ Graph side_b;
 
 
 void setup() {
-  size(1150, 800);
+  size(1150, 500);
   // print the serial list with indexes
   for (int i = 0; i < Serial.list().length; i++) {
     println(i, Serial.list()[i]);
@@ -25,9 +25,12 @@ void setup() {
       println("Serial connection:", Serial.list()[i], myPort);
     }
   }
-  side_a = new Graph(50, 50, 500, 300);
-  side_b = new Graph(600, 50, 500, 300);
+  side_a = new Graph(50, 50, 500, 400);
+  side_b = new Graph(600, 50, 500, 400);
   side_a.max_voltage = 6; // side A is set up to 0-5v in the Arduino code
+  
+  side_a.name = "side a";
+  side_b.name = "side b";
   
   resetRecording(side_a);
   resetRecording(side_b);
@@ -43,16 +46,7 @@ void draw() {
     side_b.drawGraph();
   }
   
-  long curr_millis = millis();
-  if (side_a.rec_button_state && curr_millis > side_a.rec_timer + side_a.rec_timer_interval){
-    side_a.rec_timer = curr_millis;
-    side_a.recordings.append(LocalDateTime.now()+","+side_a.getNewestTemp()+","+side_a.getNewestVoltage());
-  }
-  curr_millis = millis();
-  if (side_b.rec_button_state && curr_millis > side_b.rec_timer + side_b.rec_timer_interval){
-    side_b.rec_timer = curr_millis;
-    side_b.recordings.append(LocalDateTime.now()+","+side_b.getNewestTemp()+","+side_b.getNewestVoltage());
-  }
+  recordingHandler();
 }
 
 // event function called by processing when receiving new serial data
@@ -113,6 +107,19 @@ void resetRecording(Graph g){
   g.recordings.clear();
   g.recordings.append("SIDE: A");
   g.recordings.append("FORMAT:timestamp,temp,voltage");
+}
+
+void recordingHandler(){
+  long curr_millis = millis();
+  if (side_a.rec_button_state && curr_millis > side_a.rec_timer + side_a.rec_timer_interval){
+    side_a.rec_timer = curr_millis;
+    side_a.recordings.append(LocalDateTime.now()+","+side_a.getNewestTemp()+","+side_a.getNewestVoltage());
+  }
+  curr_millis = millis();
+  if (side_b.rec_button_state && curr_millis > side_b.rec_timer + side_b.rec_timer_interval){
+    side_b.rec_timer = curr_millis;
+    side_b.recordings.append(LocalDateTime.now()+","+side_b.getNewestTemp()+","+side_b.getNewestVoltage());
+  }
 }
 
 String getTimestamp(){

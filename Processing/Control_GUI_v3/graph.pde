@@ -20,9 +20,9 @@ class Graph{
   int min_temp = -15;
   int max_temp = 45;
   
-  int margin = 10;
+  //int margin = 10;
   
-  color voltage_color = color(0, 0, 255);
+  color voltage_color = color(0, 100, 255);
   color temp_color = color(255, 255, 0);
   
   int rec_button_x, rec_button_y;//, rec_button_w, rec_button_h;
@@ -35,6 +35,8 @@ class Graph{
   StringList recordings;
   long rec_timer;
   int rec_timer_interval = 50;
+  
+  String name = "graph x";
   
   Graph(int x_, int y_, int w_, int h_){
     data_voltage = new FloatList();
@@ -78,7 +80,7 @@ class Graph{
   }
   
   void drawInfo(){
-    textSize(10);
+    textSize(12);
     float index_y_scalar = textAscent()*0.9;
     float index_x_offset [] = {textWidth("-10"), textWidth("-5"), textWidth("5"), textWidth("40")};
     int stroke_w = 8;
@@ -91,7 +93,7 @@ class Graph{
     for (int v = min_voltage; v <= max_voltage; v+=1){
       fill(voltage_color);
       stroke(voltage_color);
-      float x = left_info_area_x+left_info_area_w-25; // x representing drawing origien (line right side)
+      float x = left_info_area_x+left_info_area_w-35; // x representing drawing origien (line right side)
       float y = map(v, min_voltage, max_voltage, left_info_area_y+left_info_area_h, left_info_area_y); // y representing draweing height for line   
       line(x, y, x-stroke_w, y);
       if (v%2==0){
@@ -125,9 +127,16 @@ class Graph{
     if (data_voltage.size() > 0) text("vol: " + nf(data_voltage.get(data_voltage.size()-1), 0, 2), right_info_area_x+right_info_area_w*0.1, right_info_area_y+right_info_area_h*0.05);
     fill(temp_color);
     if (data_temp.size() > 0) text("temp: " + nf(data_temp.get(data_temp.size()-1), 0, 2), right_info_area_x+right_info_area_w*0.1, right_info_area_y+right_info_area_h*0.12);
+    
+    fill(255);
+    textSize(15);
+    textAlign(CENTER, CENTER);
+    text(name, bottom_info_area_x + bottom_info_area_w/2, bottom_info_area_y + bottom_info_area_h/2);
+    textAlign(CORNER);
   }
   
   void testDraw(){
+    rectMode(CORNER);
     noFill();
     
     stroke(255, 0, 0);
@@ -189,6 +198,7 @@ class Graph{
     textAlign(CENTER, CENTER);
     text(rec_button_text, rec_button_x, rec_button_y);
     textAlign(CORNER);
+    
   }
   
   void plotGraph(FloatList data, color c, int min, int max){
