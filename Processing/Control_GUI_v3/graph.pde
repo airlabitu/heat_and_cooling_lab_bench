@@ -22,12 +22,12 @@ class Graph{
   
   //int margin = 10;
   
-  color voltage_color = color(0, 100, 255);
+  color voltage_color = color(#74B3F5);
   color temp_color = color(255, 255, 0);
   
   int rec_button_x, rec_button_y;//, rec_button_w, rec_button_h;
   int rec_button_w;
-  int rec_text_size = 12;
+  int rec_text_size = 18;
   String rec_button_text = "REC";
   boolean rec_button_state = false;
   color rec_on = color(255,0,0);
@@ -35,6 +35,8 @@ class Graph{
   StringList recordings;
   long rec_timer;
   int rec_timer_interval = 50;
+  
+  int left_info_text_size = 18;
   
   String name = "graph x";
   
@@ -80,7 +82,7 @@ class Graph{
   }
   
   void drawInfo(){
-    textSize(12);
+    textSize(left_info_text_size);
     float index_y_scalar = textAscent()*0.9;
     float index_x_offset [] = {textWidth("-10"), textWidth("-5"), textWidth("5"), textWidth("40")};
     int stroke_w = 8;
@@ -122,14 +124,14 @@ class Graph{
     }
     
     
-    textSize(12);
+    textSize(rec_text_size);
     fill(voltage_color);
     if (data_voltage.size() > 0) text("vol: " + nf(data_voltage.get(data_voltage.size()-1), 0, 2), right_info_area_x+right_info_area_w*0.1, right_info_area_y+right_info_area_h*0.05);
     fill(temp_color);
     if (data_temp.size() > 0) text("temp: " + nf(data_temp.get(data_temp.size()-1), 0, 2), right_info_area_x+right_info_area_w*0.1, right_info_area_y+right_info_area_h*0.12);
     
     fill(255);
-    textSize(15);
+    textSize(left_info_text_size);
     textAlign(CENTER, CENTER);
     text(name, bottom_info_area_x + bottom_info_area_w/2, bottom_info_area_y + bottom_info_area_h/2);
     textAlign(CORNER);
@@ -184,7 +186,7 @@ class Graph{
     if (rec_button_state) fill(rec_on);
     else fill(rec_off);
     
-    textSize(12);
+    textSize(rec_text_size);
     
     float h = (textAscent()+textDescent())*2; // just an estimate 200% text height
     float x = rec_button_x;

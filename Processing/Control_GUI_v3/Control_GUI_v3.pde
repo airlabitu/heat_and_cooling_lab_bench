@@ -16,7 +16,7 @@ Graph side_b;
 
 
 void setup() {
-  size(1150, 500);
+  size(1500, 800);
   // print the serial list with indexes
   for (int i = 0; i < Serial.list().length; i++) {
     println(i, Serial.list()[i]);
@@ -25,8 +25,8 @@ void setup() {
       println("Serial connection:", Serial.list()[i], myPort);
     }
   }
-  side_a = new Graph(50, 50, 500, 400);
-  side_b = new Graph(600, 50, 500, 400);
+  side_a = new Graph(50, 50, 650, 700);
+  side_b = new Graph(800, 50, 650, 700);
   side_a.max_voltage = 6; // side A is set up to 0-5v in the Arduino code
   
   side_a.name = "side a";
